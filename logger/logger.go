@@ -39,14 +39,6 @@ func Init() {
 	})
 }
 
-// GetLogger returns the initialized zap logger
-func GetLogger() *zap.Logger {
-	if Logger == nil {
-		Init()
-	}
-	return Logger
-}
-
 // Sync flushes any buffered logger entries
 func Sync() {
 	if Logger != nil {
