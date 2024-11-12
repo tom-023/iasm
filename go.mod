@@ -3,12 +3,14 @@ module github.com/tom-023/iasm
 go 1.21.0
 
 require (
+	github.com/slack-go/slack v0.15.0
 	github.com/spf13/viper v1.19.0
 	go.uber.org/zap v1.21.0
 )
 
 require (
 	github.com/fsnotify/fsnotify v1.7.0 // indirect
+	github.com/gorilla/websocket v1.4.2 // indirect
 	github.com/hashicorp/hcl v1.0.0 // indirect
 	github.com/magiconair/properties v1.8.7 // indirect
 	github.com/mitchellh/mapstructure v1.5.0 // indirect

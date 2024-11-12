@@ -8,11 +8,19 @@ import (
 
 	"github.com/tom-023/iasm/config"
 	"github.com/tom-023/iasm/logger"
+	"github.com/tom-023/iasm/notify"
 	"go.uber.org/zap"
 )
 
 func isRespond(url string, timeout time.Duration) bool {
-	client := http.Client{
+	//client := http.Client{
+	//	Timeout: timeout,
+	//}
+
+	client := &http.Client{
+		CheckRedirect: func(req *http.Request, via []*http.Request) error {
+			return http.ErrUseLastResponse // リダイレクトを無効化して、リダイレクトレスポンスを返す
+		},
 		Timeout: timeout,
 	}
 
@@ -28,15 +36,16 @@ func isRespond(url string, timeout time.Duration) bool {
 		return true
 	}
 
-	logger.Logger.Info("Unexpected response status", zap.String("url", url), zap.Int("status", resp.StatusCode))
+	logger.Logger.Info("URL response status", zap.String("url", url), zap.Int("status", resp.StatusCode))
 	return false
 }
 
-// Monitor checks a list of URLs with the specified timeout
 func Monitor() {
 	c := config.GetConfig()
 	urlsStr := c.GetString("urls")
 	timeoutStr := c.GetString("timeout")
+	slackToken := c.GetString("slack_token")
+	slackChannel := c.GetString("slack_channel")
 
 	if urlsStr == "" {
 		logger.Logger.Fatal("No URLs configured for monitoring")
@@ -61,11 +70,19 @@ func Monitor() {
 		}
 	}
 
+	var alertUrls []string
+
 	for _, url := range urls {
-		logger.Logger.Info(fmt.Sprintf("Check URL: %s", url))
 		if isRespond(url, timeout) {
-			// 通知処理を後ほど追加予定
-			fmt.Printf("URL %s failed to respond as expected\n", url)
+			alertUrls = append(alertUrls, fmt.Sprintf("- %s", url))
+		}
+	}
+
+	if len(alertUrls) > 0 {
+		message := fmt.Sprintf("*[Alert] The following URL is now available for connection.*\n%s", strings.Join(alertUrls, "\n"))
+		err := notify.NotifySlack(slackToken, slackChannel, message)
+		if err != nil {
+			logger.Logger.Error("Failed to send Slack notification", zap.Error(err))
 		}
 	}
 }
