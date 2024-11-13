@@ -11,5 +11,5 @@ func main() {
 	logger.Init()
 	defer logger.Sync()
 
-	monitor.Monitor()
+	startTickerLoop(monitor.Monitor)
 }

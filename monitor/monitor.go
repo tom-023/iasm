@@ -13,10 +13,6 @@ import (
 )
 
 func isRespond(url string, timeout time.Duration) bool {
-	//client := http.Client{
-	//	Timeout: timeout,
-	//}
-
 	client := &http.Client{
 		CheckRedirect: func(req *http.Request, via []*http.Request) error {
 			return http.ErrUseLastResponse // リダイレクトを無効化して、リダイレクトレスポンスを返す
