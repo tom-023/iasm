@@ -29,6 +29,6 @@ jobs:
       - name: Build and Push Container
         uses: docker/build-push-action@v5
         with:
-          context: docker
           push: true
+          file: docker/Dockerfile
           tags: ${{ env.REGISTRY }}/${{ github.repository }}/${{ env.IMAGE_NAME }}:${{ github.ref_name }}
