@@ -31,3 +31,20 @@ Set the following environment variables to configure the application:
   - Slack channel for sending alerts. 
   - Example: #alerts 
   - Required
+
+### docker-compose.yml
+
+```yml
+version: '3.8'
+
+services:
+  iasm:
+    image: ghcr.io/tom-023/iasm/iasm:v.0.0.2
+    environment:
+      TZ: "Asia/Tokyo"
+      URLS: "https://example1.com,https://example2.com"
+      MONITOR_INTERVAL: "1m"
+      TIMEOUT: "10s"
+      SLACK_TOKEN: "xoxb-your-slack-token"
+      SLACK_CHANNEL: "#test"
+```
